@@ -1,0 +1,2604 @@
+swagger: '2.0'
+
+x-samples-languages: ['curl', 'java', 'swift', 'node', 'python', 'ruby']
+
+info:
+  title: CORPORATE TRAVEL
+  version: "1.0.0"
+host: swagger.ui.host
+basePath: /router/v1/tex/api
+schemes:
+- http
+- https
+paths:
+  /catalogs/{id}:
+    get:
+      description: |
+        Gets a catalog of shopping options available to the traveler.
+      produces:
+      - application/json
+      tags:
+      - Catalog
+      operationId: readCatalog
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of a previously created `Catalog` to retrieve.
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/Catalog'
+        400:
+          description: Bad Request
+        404:
+           description: Catalog not found
+        422:
+          description: Unable to process
+        500:
+           description: Internal System Error
+  /catalogs:
+    post:
+      description: |
+        Creates a catalog of shopping options available to the traveler. After defining a set of search criteria, completes the shopping request and assigns a unique identifier to the resulting catalog.
+      consumes:
+      - application/json
+      tags:
+      - Catalog
+      operationId: createCatalog
+      parameters:
+      - in: body
+        name: shopRequest
+        required: true
+        schema:
+          $ref: '#/definitions/ShopRequest'
+      responses:
+        201:
+          description: Catalog created
+          headers:
+            Location:
+              description: Location
+              type: string
+        500:
+           description: Internal System Error
+  /carts/{id}:
+    get:
+      description:  |
+        Gets the contents of the `Cart`.
+      produces:
+      - application/json
+      tags:
+      - Cart
+      operationId: readCart
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of the `Cart` to retrieve in `site-siteNameuser-userName` format.
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/Cart'
+        400:
+          description: Bad Request
+        404:
+           description: Cart not found
+        422:
+          description: Unable to process
+        500:
+           description: Internal System Error
+    patch:
+      description:  |
+        Update `Cart` content.
+      consumes:
+      - application/json
+      tags:
+      - Cart
+      operationId: patchCart
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of the `Cart` to update in `site-siteNameuser-userName` format.
+        required: true
+        type: string
+      - in: body
+        name: cartRequest
+        required: true
+        schema:
+          $ref: '#/definitions/CartRequest'
+      responses:
+        200:
+          description: Cart updated
+        400:
+          description: Bad Request
+        500:
+          description: Internal System Error
+  /carts/{id}/bookings:
+      post:
+        description: |
+          Creates a booked itinerary, but does so based on the `Cart` unique identifier. Assigns a unique identifier to the resulting booking.
+        consumes:
+        - application/json
+        tags:
+        - Booking
+        operationId: bookCart
+        parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the `Cart` to retrieve in `site-siteNameuser-userName` format.
+          required: true
+          type: string
+        - in: body
+          name: bookingRequest
+          required: true
+          schema:
+            $ref: '#/definitions/BookRequest'
+        responses:
+          201:
+            description: Booking created
+            headers:
+              Location:
+                description: Location
+                type: string
+          500:
+             description: Internal System Error
+  /bookings:
+    post:
+      description: |
+        Creates a booked itinerary when the traveler completes criteria in the booking request. Assigns a unique identifier to the resulting booking.
+      consumes:
+      - application/json
+      tags:
+      - Booking
+      operationId: createBooking
+      parameters:
+      - in: body
+        name: bookingRequest
+        required: true
+        schema:
+          $ref: '#/definitions/BookRequest'
+      responses:
+        201:
+          description: Booking created
+          headers:
+            Location:
+              description: Location
+              type: string
+        500:
+           description: Internal System Error
+  /bookings/{id}:
+    get:
+      description: |
+        Gets the traveler’s booked itinerary details.
+      produces:
+        - application/json
+      tags:
+        - Booking
+      operationId: readBooking
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of a `Booking` created in the GetThere application.
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+              $ref: '#/definitions/Booking'
+        400:
+          description: Bad Request
+        404:
+          description: Booking not found
+        422:
+          description: Unable to process
+        500:
+          description: Internal System Error
+    patch:
+      description:  |
+        Modify a booking.
+      consumes:
+      - application/json
+      tags:
+      - Booking
+      operationId: patchBooking
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of a `Booking` to be modified.
+        required: true
+        type: string
+      - in: body
+        name: modifyBookingRequest
+        required: true
+        schema:
+            $ref: '#/definitions/ModifyBookingRequest'
+      responses:
+        204:
+          description: Booking cancelled
+        400:
+          description: Bad Request
+        403:
+          description: Unauthorized access
+        404:
+          description: Booking not found
+        422:
+          description: Unable to process
+        500:
+          description: Internal System Error
+  /sites:
+    post:
+      description: |
+        Creates a sub-site.
+      consumes:
+      - application/json
+      tags:
+      - Site
+      operationId: createSite
+      parameters:
+      - in: body
+        name: siteCreateRequest
+        required: true
+        schema:
+          $ref: '#/definitions/SiteCreateRequest'
+      responses:
+        201:
+          description: Site created
+        400:
+          description: Bad request
+        403:
+          description: Unauthorized access
+        404:
+          description: Site not found
+        405:
+          description: Site is closed
+        422:
+          description: Unable to process
+        500:
+         description: Internal System Error
+  /sites/{id}:
+    get:
+      description: |
+        Get site details.
+      produces:
+        - application/json
+      tags:
+        - Site
+      operationId: readSite
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier to get the Site details by `MainSiteName` and `SubSiteName`.
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/SiteDetails'
+        400:
+          description: Bad Request
+        403:
+          description: Unauthorized Access
+        404:
+          description: Site not found
+        405:
+          description: Site Closed
+        422:
+          description: Unable to process
+        500:
+          description: Internal System Error
+    patch:
+      description:  |
+        Update `Site` configuration
+      consumes:
+      - application/json
+      tags:
+      - Site
+      operationId: patchSite
+      parameters:
+      - name: id
+        in: path
+        description: ID of `Site` to update.
+        required: true
+        type: string
+      - in: body
+        name: siteUpdateRequest
+        required: true
+        schema:
+          $ref: '#/definitions/SiteUpdateRequest'
+      responses:
+        204:
+          description: Site updated
+        400:
+          description: Bad Request
+        403:
+          description: Unauthorized Access
+        404:
+          description: Site not found
+        405:
+          description: Site Closed
+        422:
+          description: Bad Request
+        500:
+          description: Internal System Error
+  /sites/{id}/announcements:
+    get:
+      description: |
+        Get site announcements.
+      produces:
+        - application/json
+      tags:
+        - Site
+      operationId: readSiteAnnouncements
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier to get Site Announcements by a main site name and subsite name, in the form of `site-{mainSite}subsite-{subsite}`.
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/SiteAnnouncements'
+        400:
+          description: Bad Request
+        403:
+          description: Unauthorized Access
+        404:
+          description: Site not found
+        405:
+          description: Site Closed
+        422:
+          description: Unable to process
+        500:
+          description: Internal System Error
+  /bookingRules/{id}:
+    get:
+      description: |
+        Gets booking rules for the traveler's booked itinerary.
+      produces:
+        - application/json
+      tags:
+        - BookingRules
+      operationId: readBookingRules
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of the itinerary from `GET bookings`.
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+              $ref: '#/definitions/BookingRules'
+        400:
+          description: Bad Request
+        404:
+          description: Booking rules not found
+        422:
+          description: Unable to process
+        500:
+          description: Internal System Error
+  /travelers/{id}:
+    get:
+      description: |
+        Gets the traveler’s information.
+      produces:
+      - application/json
+      tags:
+      - Traveler
+      operationId: readTraveler
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of the `Traveler` to search for by `SiteName` and `UserName`.
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/Traveler'
+        400:
+          description: Bad Request
+        404:
+          description: Traveler not found
+        422:
+          description: Unable to process
+        500:
+          description: Internal System Error
+  /fareRules/{id}:
+    get:
+        description: |
+          Gets eligibility requirements and travel restrictions for a flight.
+        produces:
+        - application/json
+        tags:
+        - FareRules
+        operationId: getFareRules
+        parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the `FareRules` to display from the `Catalog`.
+          required: true
+          type: string
+        responses:
+          200:
+            description: Successful response
+            schema:
+              $ref: '#/definitions/FareRules'
+  /deployment:
+    get:
+      description: |
+        Returns information about deployed services.
+      produces:
+      - application/json
+      tags:
+      - Deployment
+      operationId: getDeploymentInfo
+      responses:
+        200:
+          description: Successful response
+          examples:
+            application/json:
+              {
+                "environment": "cert",
+                "version": "1.4.2",
+                "buildDate": "20171020-1341",
+                "endpoints": [
+                    {
+                        "method": "POST",
+                        "path": "/v1/tex/api/bookings"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/v1/tex/api/catalogs/{id}"
+                    }
+                ]
+              }
+          schema:
+            $ref: '#/definitions/DeploymentInfo'
+
+  /seatMaps/{id}:
+    get:
+      description: |
+        Gets `AircraftSeatMap` by `resourceId`.
+      produces:
+      - application/json
+      tags:
+      - SeatMap
+      operationId: readAircraftSeatMap
+      parameters:
+      - name: id
+        in: path
+        description: ID of `AircraftSeatMap` to fetch.
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/AircraftSeatMap'
+        400:
+          description: Bad Request
+        404:
+           description: AircraftSeatMap not found
+        422:
+          description: Unable to process
+        500:
+           description: Internal System Error
+
+definitions:
+  PaymentType:
+    type: string
+    enum: ["PAYMENT_CARD", "BILL_TO_ACCOUNT"]
+    description: identifies the type of payment
+  OpenResponseFormatType:
+        type: string
+        enum: ["NUMBER", "DATE", "TEXT"]
+        description: identifies the format of the data in the open response
+  CatalogType:
+    type: string
+    enum: ["FLIGHT_ITINERARY", "FLIGHT"]
+    description: identifies the type of asset within a catalog
+  CartItemType:
+    type: string
+    enum: ["FLIGHT_ITINERARY", "FLIGHT_JOURNEY", "FLIGHT_SEAT"]
+    description: identifies the type of item that may be put into a cart
+  ClassOfService:
+    type: string
+    enum: ["COACH", "PREMIUM_ECONOMY", "BUSINESS", "FIRST"]
+    description: The fare class the traveler prefers. Can be `COACH`, `PREMIUM_ECONOMY`, `BUSINESS`, `FIRST`.
+  JustificationType:
+    type: string
+    enum: ["FLIGHT", "HOTEL_STAY", "CAR_RENTAL","NO_HOTEL_BOOKED","NO_CAR_BOOKED"]
+    description: the type of asset for which a justification applies
+  TelephoneNumberType:
+    type: string
+    enum: ["HOME", "BUSINESS", "MOBILE"]
+    description: The type of telephone number provided. Can be `HOME`, `BUSINESS`, `MOBILE`.
+  GenderType:
+    type: string
+    enum: ["MALE","FEMALE"]
+    description: type of gender
+  FareType:
+    type: string
+    enum: ["LOWEST_AVAILABLE", "NO_ADVANCE_PURCHASE", "NO_PENALTY", "UNRESTRICTED"]
+    description: The requested pricing type for the fare, and what restrictions are acceptable. Can be `LOWEST_AVAILABLE`, `NO_ADVANCE_PURCHASE`, `NO_PENALTY`, `UNRESTRICTED`.
+  DistanceUnit:
+    type: string
+    enum: ["MILE","KM"]
+    description: distance unit.  Choose one of MILE=mile, KM=kilometer
+  NamePrefixType:
+    type: string
+    enum: ["Mr","Mrs","Ms","Miss","Dr"]
+    description: the supported prefixes for a name prefix
+  AirExtraType:
+    type: string
+    enum: ["LUGGAGE","MEAL"]
+    description: the supported types of AirExtras
+  AirExtraScope:
+    type: string
+    enum: ["FLIGHT_ITINERARY", "FLIGHT_JOURNEY", "FLIGHT"]
+    description: the supported scope of AirExtras, the part of an itinerary to which the AirExtra applies
+
+  MoneyWithCode:
+    type: object
+    properties:
+      code:
+        type: string
+        example: X12
+      amount:
+        type: integer
+        example: 15600
+      currencyCode:
+        type: string
+        example: USD
+        description: "[ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code."
+  Money:
+    type: object
+    properties:
+      amount:
+        type: integer
+        example: 15600
+      currencyCode:
+        type: string
+        example: USD
+        description: "[ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code."
+  FareBreakdown:
+    type: object
+    properties:
+      baseFare:
+          $ref: '#/definitions/Money'
+      taxes:
+        type: array
+        items:
+          $ref: '#/definitions/MoneyWithCode'
+      totalTaxes:
+          $ref: '#/definitions/Money'
+      totalFare:
+          $ref: '#/definitions/Money'
+  Fare:
+    type: object
+    properties:
+      negotiated:
+        type: boolean
+      quotedPrice:
+          $ref: '#/definitions/FareBreakdown'
+      localizedPrice:
+          $ref: '#/definitions/FareBreakdown'
+
+  Itinerary:
+    type: object
+    required:
+      - itineraryId
+      - fare
+      - journeys
+    properties:
+      itineraryId:
+        type: string
+        example: c23e107e-2b3a-4793-a442-217fdec4dcb2
+        description: the identifier for the itinerary
+      isSecuredByTSA:
+        type: boolean
+        example: true
+        description: is security for flights in this itinerary provided by the United States Transportation Securty Administration.  If so, then additional passenger information will be required such as date of birth and gender
+      fare:
+        $ref: '#/definitions/Fare'
+      journeys:
+         type: array
+         items:
+           $ref: '#/definitions/Journey'
+      policyViolations:
+        type: array
+        items:
+          $ref: '#/definitions/Violation'
+      customNotes:
+        type: array
+        items:
+          $ref: '#/definitions/CustomNote'
+
+  BookedItinerary:
+    type: object
+    required:
+      - itineraryId
+      - fare
+      - journeys
+    properties:
+      itineraryId:
+        type: string
+        example: c23e107e-2b3a-4793-a442-217fdec4dcb2
+        description: the identifier for the itinerary
+      fare:
+        $ref: '#/definitions/Fare'
+      journeys:
+         type: array
+         items:
+           $ref: '#/definitions/BookedJourney'
+      airExtras:
+        type: array
+        items:
+          $ref: '#/definitions/BookedAirExtra'
+
+  AnnotatedFlight:
+      type: object
+      required:
+        - flightId
+        - fromAirportCode
+        - toAirportCode
+        - departureDate
+        - departureTime
+        - arrivalDate
+        - arrivalTime
+        - marketingAirlineCode
+        - marketingAirlineName
+        - operatingAirlineCode
+        - operatingAirlineName
+        - flightNumber
+        - numberOfStops
+        - cabinTypeName
+        - agencyPreference
+        - corporatePreference
+      properties:
+        flightId:
+          type: string
+          example: c23e107e-2b3a-4793-a442-217fdec4dcb2
+          description: the identifier for the flight
+        fromAirportCode:
+          type: string
+          example: 'DFW'
+          minLength: 3
+          maxLength: 3
+        toAirportCode:
+          type: string
+          example: 'LAX'
+          minLength: 3
+          maxLength: 3
+        departureDate:
+          type: string
+          format: date
+        departureTime:
+          type: string
+          format: date-time
+          example: '03:00'
+        arrivalDate:
+          type: string
+          format: date
+        arrivalTime:
+          type: string
+          format: date-time
+          example: '22:30'
+        marketingAirlineCode:
+          type: string
+          maxLength: 2
+          minLength: 2
+          example: AA
+        marketingAirlineName:
+          type: string
+          example: American Airlines
+        operatingAirlineCode:
+          type: string
+          maxLength: 2
+          minLength: 2
+          example: AA
+        operatingAirlineName:
+          type: string
+          example: American Airlines
+        flightNumber:
+          type: string
+          maxLength: 6
+          minLength: 1
+          example: 1276
+        numberOfStops:
+          type: integer
+          minimum: 0
+          maximum: 3
+          description: number between 0-3
+        equipment:
+          $ref: '#/definitions/Equipment'
+        distance:
+          $ref: '#/definitions/Distance'
+        durationInMinutes:
+          type: integer
+          description: the duration, expressed in minutes
+          example: 125
+        cabinTypeName:
+          type: string
+          example: 'Coach'
+        onTimePercentage:
+          type: integer
+        fareBasis:
+          type: string
+          example: 'KRA0AWEN'
+        fareBrandName:
+          type: string
+          description: the name of the brand associated with this fare, optional
+          example: 'SeatAndBag'
+        isAirConnect:
+          type: boolean
+          description: indicates if the airline is offered as part of the AirConnect capability of the product
+          example: false
+        seatMapId:
+          type: string
+          example: 'SM&FROM_LOWFARE%3A24f47785-ec7e-4d29-9b96-7c94ee8d81c0.-1315553978%3AAA%3A2587%3A0704&site-siteNameuser-userName'
+        fareRulesId:
+          type: string
+          example: 'FR&site-siteNameuser-userName&2696bdcf-7108-457f-bab2-b966ff8088f7.686962979&AA%3A2563%3A2510&7c03d335-b37c-4b02-aad9-8161c53a4bf5.-84724865'
+        agencyPreference:
+          $ref: '#/definitions/Preference'
+        corporatePreference:
+          $ref: '#/definitions/Preference'
+        policyViolations:
+          type: array
+          items:
+            $ref: '#/definitions/Violation'
+        customNote:
+          $ref: '#/definitions/CustomNote'
+        airlineConfirmationId:
+          type: string
+          example: ADGETD
+          description: a confirmation identifier assigned by the airline when this flight has been booked
+
+  BookedFlight:
+      type: object
+      required:
+        - flightId
+        - fromAirportCode
+        - toAirportCode
+        - departureDate
+        - departureTime
+        - arrivalDate
+        - arrivalTime
+        - marketingAirlineCode
+        - marketingAirlineName
+        - operatingAirlineCode
+        - operatingAirlineName
+        - flightNumber
+        - cabinTypeName
+      properties:
+        flightId:
+          type: string
+          example: c23e107e-2b3a-4793-a442-217fdec4dcb2
+          description: the identifier for the flight
+        fromAirportCode:
+          type: string
+          example: 'DFW'
+          minLength: 3
+          maxLength: 3
+        toAirportCode:
+          type: string
+          example: 'LAX'
+          minLength: 3
+          maxLength: 3
+        departureDate:
+          type: string
+          format: date
+        departureTime:
+          type: string
+          format: date-time
+          example: '03:00'
+        arrivalDate:
+          type: string
+          format: date
+        arrivalTime:
+          type: string
+          format: date-time
+          example: '22:30'
+        marketingAirlineCode:
+          type: string
+          maxLength: 2
+          minLength: 2
+          example: AA
+        marketingAirlineName:
+          type: string
+          example: American Airlines
+        operatingAirlineCode:
+          type: string
+          maxLength: 2
+          minLength: 2
+          example: AA
+        operatingAirlineName:
+          type: string
+          example: American Airlines
+        flightNumber:
+          type: string
+          maxLength: 4
+          minLength: 1
+          example: 1276
+        cabinTypeName:
+          type: string
+          example: 'Coach'
+        fareBrandName:
+          type: string
+          description: the name of the brand associated with this fare, optional
+          example: 'SeatAndBag'
+        fareBasis:
+          type: string
+          example: 'KRA0AWEN'
+        isAirConnect:
+          type: boolean
+          description: indicates if the airline is offered as part of the AirConnect capability of the product
+          example: false
+        airlineConfirmationId:
+          type: string
+          example: ADGETD
+          description: a confirmation identifier assigned by the airline when this flight has been booked
+        assignedSeats:
+          type: array
+          items:
+            type: string
+            example: '34A'
+        airExtras:
+          type: array
+          items:
+            $ref: '#/definitions/BookedAirExtra'
+
+
+  Distance:
+    type: object
+    required:
+      - length
+      - unit
+    properties:
+      length:
+        type: integer
+      unit:
+        $ref: '#/definitions/DistanceUnit'
+  Equipment:
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        type: string
+        maxLength: 10
+        minLength: 1
+        example: 777
+        description: the type of equipment, usually an industry stadard code
+      name:
+        type: string
+        maxLength: 20
+        minLength: 1
+        example: Boeing 777
+        description: the name of the equipment
+  CustomNote:
+    type: object
+    properties:
+      label:
+        type: string
+        maxLength: 25
+        minLength: 1
+        example: Not recommended
+      text:
+        type: string
+        maxLength: 200
+        minLength: 1
+        example: Flight is not recommended based on frequency of lateness
+      url:
+        type: string
+        format: url
+        description: A link to an eternal web site proving additional information.
+        example: ''
+  Preference:
+    type: object
+    properties:
+      preferred:
+        type: boolean
+        example: true
+        description: true when this is a preferred flight for the organization
+      label:
+        type: string
+        example: Company preferred
+  Violation:
+    type: object
+    properties:
+      type:
+        $ref: '#/definitions/CodeContext'
+      behavior:
+        $ref: '#/definitions/CodeContext'
+      ruleName:
+        type: string
+        example: ''
+        minLength: 1
+        maxLength: 60
+      fromAirportCode:
+        type: string
+        example: 'DFW'
+        minLength: 3
+        maxLength: 3
+      toAirportCode:
+        type: string
+        example: 'LAX'
+        minLength: 3
+        maxLength: 3
+
+  Catalog:
+    type: object
+    required:
+      - catalogType
+      - catalogId
+      - request
+      - itineraries
+    properties:
+      catalogType:
+            $ref: '#/definitions/CatalogType'
+      catalogId:
+        type: string
+        example: c23e107e-2b3a-4793-a442-217fdec4dcb2
+        description: the identifier for the catalog
+      request:
+        $ref: '#/definitions/ShopRequest'
+      itineraries:
+        type: array
+        items:
+          $ref: '#/definitions/Itinerary'
+  Booking:
+    type: object
+    required:
+      - bookingId
+      - confirmationId
+      - travelers
+      - bookingState
+    properties:
+      bookingId:
+        type: string
+        example: 1465975732.98284
+        description:  unique, persistent identifier of a booking created in the GetThere application
+      confirmationId:
+        type: string
+        example: NZBBLA
+        description:  identifier for the booking in the supplier system (i.e. Sabre, Apollo, SouthWest)
+      travelers:
+        type: array
+        items:
+          $ref: '#/definitions/TravelerPersonalInformation'
+      isCancelable:
+        type: boolean
+        example: true
+        description: is the traveler allowed to cancel this booking?
+      bookingRulesId:
+        type: string
+        example: c23e107e-2b3a-4793-a442-217fdec4dcb2
+        description: Identifier for booking rules API
+      components:
+          $ref: '#/definitions/BookedComponents'
+      contactInfo:
+          $ref: '#/definitions/TravelerContactInfo'
+      totalFlightCost:
+        type: array
+        items:
+          $ref: '#/definitions/Money'
+      totalTripCost:
+        type: array
+        items:
+          $ref: '#/definitions/Money'
+      bookingState:
+        type: string
+        enum: ["ARCHIVED", "CANCELED", "ACTIVE", "QUEUED", "TICKETED"]
+        example: ACTIVE
+        description: |
+          Represent the booking state.
+          * ARCHIVED
+            Booking was archived
+          * CANCELED
+            Booking is canceled
+          * ACTIVE
+            Booking is active
+          * QUEUED
+            Booking is in the queue and is wating for processing
+          * TICKETED
+            Booking is ticketed
+
+  BookedComponents:
+    type: object
+    properties:
+      flightItineraries:
+        type: array
+        items:
+          $ref: '#/definitions/BookedItinerary'
+
+  CodeContext:
+    type: object
+    required:
+          - code
+          - context
+    properties:
+     code:
+       type: string
+       example: 1
+     context:
+       type: string
+       description: Standard context identifier to allow the code to be understood
+       example: TPV
+
+  ShopRequest:
+      type: object
+      required:
+        - travelerId
+      properties:
+        travelerId:
+          type: string
+          example: 'site-siteNameuser-userName'
+          description: The unique identifier of the `Traveler` making the request.
+        classOfService:
+          $ref: '#/definitions/ClassOfService'
+        hoursTolerance:
+          type: integer
+          description: The range of allowable hours to search before and after the traveler’s requested flight time.
+          example: 12
+        shopByPrice:
+            $ref: '#/definitions/ShopByPrice'
+        oneWay:
+            $ref: '#/definitions/OneWay'
+        roundTrip:
+            $ref: '#/definitions/RoundTrip'
+      example:
+        travelerId: 'site-siteNameuser-userName'
+        classOfService: 'COACH'
+        shopByPrice:
+          fareType: 'LOWEST_AVAILABLE'
+        oneWay:
+          fromAirportCode: 'YYZ'
+          toAirportCode: 'DFW'
+          date: '2018-04-20'
+          time: '13:00'
+
+  PaymentCardIdAndPciData:
+    type: object
+    description: An object that contains the information of the payment card used to book the air itinerary.
+    required:
+      - paymentCardId
+    properties:
+      paymentCardId:
+        type: string
+        minLength: 1
+        maxLength: 100
+        example: '1'
+        description: The unique identifier of a payment card.
+      pciData:
+        $ref: '#/definitions/PaymentCardDetails'
+
+  PaymentCardDetailsAndBillingAddress:
+    type: object
+    description: An object that contains the information about temporary payment card used in book the air itinerary.
+    required:
+      - billingAddress
+      - pciData
+    properties:
+      billingAddress:
+        $ref: '#/definitions/Address'
+      pciData:
+        $ref: '#/definitions/PaymentCardDetails'
+
+  Address:
+    type: object
+    description: An object that contains address details.
+    required:
+      - addressLine1
+      - city
+      - stateProvinceCode
+      - postalCode
+      - countryCode
+    properties:
+      addressLine1:
+        type: string
+        example: "Ellen Ave"
+        description: First address line
+      addressLine2:
+        type: string
+        example: "House nr. 10"
+        description: Second address line
+      city:
+        type: string
+        example: "Dallas"
+        description: City
+      stateProvinceCode:
+        type: string
+        example: "TX"
+        description: State or province
+      postalCode:
+        type: string
+        example: "75063"
+        description: Postal code
+      countryCode:
+        type: string
+        example: "US"
+        description: Country
+
+  PaymentCardIdAndCustomDescription:
+    type: object
+    properties:
+      paymentCardId:
+        type: string
+        example: '1'
+        description: The identifier of a payment card
+        minLength: 1
+        maxLength: 100
+      customDescription:
+        type: string
+        example: 'Credit Card'
+        description: The description of a payment card
+        minLength: 1
+        maxLength: 100
+
+  FlightVoucher:
+    type: object
+    properties:
+      airlineCode:
+        type: string
+        example: 'AA'
+        description: Code of the airline that issued the voucher.
+        minLength: 2
+        maxLength: 2
+      voucherCode:
+        type: string
+        example: 'UW2WWG'
+        description: Code of the voucher.
+      expirationDate:
+        type: string
+        description: The date on which the voucher expires in `YYYY-MM-DD` format.
+        example: '2018-12-04'
+      initialValue:
+        $ref: '#/definitions/Money'
+        description: Initial value of the voucher.
+
+  PaymentOptionIdAndCustomDescription:
+    type: object
+    properties:
+      type:
+        $ref: '#/definitions/PaymentType'
+      paymentOptionId:
+        type: string
+        example: '0'
+        minLength: 1
+        maxLength: 100
+        description: The identifier of a payment option
+      customDescription:
+        type: string
+        example: 'Test Visa'
+        description: The description of a payment option
+        minLength: 1
+        maxLength: 100
+      quotedUsageFee:
+        $ref: '#/definitions/Money'
+      localizedUsageFee:
+        $ref: '#/definitions/Money'
+      isDefaultFormOfPayment:
+        type: boolean
+        description: true if designated as default form of payment
+
+  Loyalty:
+    type: object
+    properties:
+      vendorCode:
+        type: string
+        example: 'AA'
+      loyaltyNumber:
+        type: string
+        example: 'AA43434'
+
+  TravelerLoyalty:
+    type: object
+    properties:
+      travelerSequenceNumber:
+        type: integer
+      vendorCode:
+        type: string
+      loyaltyNumber:
+        type: string
+
+  JustificationDescriptionTypeCode:
+    type: object
+    properties:
+      type:
+        $ref: '#/definitions/JustificationType'
+      code:
+        type: string
+        example: 'CU'
+      description:
+        type: string
+        example: 'Need to fly with customer'
+
+  JustificationTypeCode:
+    type: object
+    required:
+      - type
+      - code
+    properties:
+      type:
+        $ref: '#/definitions/JustificationType'
+      code:
+        type: string
+
+  TelephoneNumber:
+    type: object
+    description: An object that contains the traveler’s telephone number information.
+    properties:
+      type:
+        $ref: '#/definitions/TelephoneNumberType'
+      number:
+        type: string
+        example: '2145551234'
+        description: The traveler’s phone number without special characters.
+
+  TravelJustification:
+    type: object
+    description: An object that contains information regarding the reason why the booking is being made.
+    properties:
+      travelPurpose:
+        type: string
+        description: The reason why the itinerary is being booked.
+      authorizerName:
+        type: string
+        description: The name of the person approving or authorizing the itinerary to be booked.
+      justifications:
+        type: array
+        description: The justification for booking an air itinerary without a hotel or car. Can be `NO_HOTEL_BOOKED`, `NO_CAR_BOOKED`.
+        items:
+          $ref: '#/definitions/JustificationTypeCode'
+
+  BookedJourney:
+      type: object
+      properties:
+        flights:
+          type: array
+          items:
+            $ref: '#/definitions/BookedFlight'
+        airExtras:
+          type: array
+          items:
+            $ref: '#/definitions/BookedAirExtra'
+
+  SupplementaryDataQuestionGroup:
+    type: object
+    properties:
+      name:
+        type: string
+        example: 'INFORMAL VOTE ON PREFERENCES WHEN TRAVELING"'
+      supplementaryDataQuestions:
+        type: array
+        items:
+          $ref: '#/definitions/SupplementaryDataQuestion'
+
+  TravelerPersonalInformation:
+    type: object
+    required:
+      - travelerId
+      - sequenceNumber
+      - personalIdentifiableInformation
+    properties:
+      travelerId:
+        type: string
+        example: 'site-SiteNameuser-UserName'
+        description: The unique identifier of the `Traveler` making the request.
+      sequenceNumber:
+        type: string
+      gender:
+        $ref: '#/definitions/GenderType'
+      namePrefix:
+        $ref: '#/definitions/NamePrefixType'
+      personalIdentifiableInformation:
+        $ref: '#/definitions/PersonalIdentifiableInformation'
+
+  PersonalInformation:
+    type: object
+    properties:
+      gender:
+        $ref: '#/definitions/GenderType'
+      namePrefix:
+        $ref: '#/definitions/NamePrefixType'
+      personalIdentifiableInformation:
+        $ref: '#/definitions/PersonalIdentifiableInformation'
+
+  ContactInfo:
+    type: object
+    properties:
+      emailAddresses:
+        type: array
+        items:
+          type: string
+          example: 'johnsmith@work.com'
+      telephoneNumbers:
+        type: array
+        items:
+          $ref: '#/definitions/TelephoneNumber'
+
+  TravelerContactInfo:
+    type: object
+    description: An object that contains the traveler’s contact information.
+    properties:
+      emailAddress:
+        type: string
+        description: The traveler’s email address.
+        example: 'johnsmith@work.com'
+      telephoneNumber:
+        $ref: '#/definitions/TelephoneNumber'
+
+  PaymentCardDetails:
+    type: object
+    description: An object that contains the 3-4 digit security code of the payment card used.
+    properties:
+      securityCode:
+        type: string
+        minLength: 3
+        maxLength: 4
+        example: '0000'
+      typeCode:
+        type: string
+        enum: ["AX","DC","DS","ER","JC","CA","CB","VI", "TP", "CN", "EC", "SW", "SO"]
+        example: 'VI'
+        description: |
+          Type of the card.
+          * AX
+            American Express
+          * DC
+            Diners Club
+          * DS
+            Discover
+          * ER
+            Enroute
+          * JC
+            JCB Card
+          * CA
+            Mastercard
+          * CB
+            Carte Blanche
+          * VI
+            Visa
+          * TP
+            Air Plus
+          * CN
+            Connect
+          * EC
+            EuroCard
+          * SW
+            Maestro
+          * SO
+            Solo
+
+      ownerName:
+        type: string
+        example: 'Vernon Bear'
+        description: Name of the owner of card.
+      number:
+        type: string
+        example: '4444333322221111'
+        minLength: 8
+        maxLength: 19
+        description: Card number.
+      expirationDate:
+        type: string
+        example: '10/18'
+        description: Card expiration date in MM/yy format.
+
+  PersonalIdentifiableInformation:
+    type: object
+    required:
+      - firstName
+      - lastName
+    properties:
+      firstName:
+        type: string
+        example: 'John'
+      middleName:
+        type: string
+        example: 'B'
+      lastName:
+        type: string
+        example: 'Smith'
+      birthDate:
+        type: string
+        example: '1960-12-23'
+        format: date
+      redressNumber:
+        type: string
+        example: '2323RED'
+      passport:
+        $ref: '#/definitions/Passport'
+
+  Passport:
+    type: object
+    properties:
+      issuingCountryCode:
+        type: string
+        example: 'US'
+      number:
+        type: string
+        example: 'A00000000'
+      expirationDate:
+        type: string
+        format: date
+        example: "2017-12-01"
+        description: Passport expiration date in `YYYY-MM-DD` format.
+
+
+
+  BookableComponents:
+    type: object
+    description: An object that contains the components of the itinerary.
+    required:
+      - bookableFlightItinerary
+    properties:
+      bookableFlightItinerary:
+        $ref: '#/definitions/BookableFlightItinerary'
+      bookableAircraftSeats:
+        $ref: '#/definitions/BookableAircraftSeats'
+      bookableAirExtras:
+        $ref: '#/definitions/BookableAirExtras'
+
+
+  BookableFlightItinerary:
+    type: object
+    description: An object that contains the details of the air itinerary selected from the shopping catalog.
+    required:
+      - itineraryId
+    properties:
+      itineraryId:
+        type: string
+        description: The unique identifier for the air itinerary selected from the shopping catalog.
+        minLength: 1
+        maxLength: 64
+        example: 'fe9d3808-ad10-4bb3-ab5d-a3bf4acc2fe8.1426400367'
+      justifications:
+        type: array
+        description: An array that contains the justification reason if the booking is outside of Sabre policy. Can be `FLIGHT`, `AIR_EXTRAS`, `HOTEL_STAY`, `CAR_RENTAL`, `NO_HOTEL_BOOKED`, `NO_CAR_BOOKED`.
+        items:
+          $ref: '#/definitions/JustificationTypeCode'
+      paymentCard:
+          $ref: '#/definitions/PaymentCardIdAndPciData'
+      temporaryPaymentCard:
+          $ref: '#/definitions/PaymentCardDetailsAndBillingAddress'
+      loyalties:
+        type: array
+        description: An array of information regarding the frequent flyer numbers for one or more Travelers. Includes which traveler in the group the loyalty number is for, the industry standard code for the airline, and the loyalty number.
+        items:
+          $ref: '#/definitions/TravelerLoyalty'
+
+  BookableAircraftSeats:
+    type: object
+    description: An object that contains the details of the aircraft seat(s) that are to be booked.
+    required:
+      - seatIds
+    properties:
+      seatIds:
+        type: array
+        items:
+          type: string
+          description: The unique identifier for the aircraft seat selected from the seatmap catalog.
+          minLength: 1
+          maxLength: 64
+          example: 'FROM_LOWFARE:68c67a34-7c86-4a46-8eec-80e14d5e551a.1991351807:AA:1513&8A'
+      paymentCard:
+        $ref: '#/definitions/PaymentCardIdAndPciData'
+      temporaryPaymentCard:
+        $ref: '#/definitions/PaymentCardDetailsAndBillingAddress'
+
+  BookableAirExtras:
+    type: object
+    description: An object that contains the details of the AirExtra(s) that are to be booked.
+    required:
+      - airExtraIds
+    properties:
+      airExtraIds:
+        type: array
+        items:
+          type: string
+          description: The unique identifier for the Air Extra.
+          minLength: 1
+          maxLength: 256
+          example: 'AE&78c27a43-2999-44b0-bc7e-ffda8756fd70.41319203&LUGGAGE&FLIGHT_JOURNEY&Outward&1'
+
+  FlightPeferences:
+    type: object
+    properties:
+      homeAirportCode:
+        type: string
+        minLength: 3
+        maxLength: 3
+        example: LHR
+      defaultPaymentCardId:
+        type: string
+        example: '1'
+
+  AirExtraPeferences:
+    type: object
+    properties:
+      defaultPaymentCardId:
+        type: string
+        example: '1'
+
+  Preferences:
+    type: object
+    properties:
+        flight:
+          $ref: '#/definitions/FlightPeferences'
+        airExtras:
+          $ref: '#/definitions/AirExtraPeferences'
+
+  BookRequest:
+    type: object
+    required:
+          - travelerId
+          - components
+          - travelers
+    properties:
+      travelerId:
+        type: string
+        example: 'site-SiteNameuser-UserName'
+        description: The unique identifier of the `Traveler` making the request.
+      contactInfo:
+          $ref: '#/definitions/TravelerContactInfo'
+      components:
+          $ref: '#/definitions/BookableComponents'
+      travelers:
+        type: array
+        description: An array that contains the traveler’s information.Includes the unique identifier of the traveler, the  sequence number, the traveler’s gender, prefix, and personal information.
+        items:
+          $ref: '#/definitions/TravelerPersonalInformation'
+      travelJustification:
+          $ref: '#/definitions/TravelJustification'
+      supplementaryData:
+        type: array
+        description: An array that contains information regarding the additional questions a traveler answers based on their booking selections.Traveler responses can be open-ended (recorded in free form text) or constrained (predefined selection that generates a `questionId`.)
+        items:
+          $ref: '#/definitions/SupplementaryDataAnswer'
+
+  Loyalties:
+    type: object
+    properties:
+      flight:
+        type: array
+        items:
+          $ref: '#/definitions/Loyalty'
+
+  PaymentCards:
+    type: object
+    properties:
+      flight:
+        type: array
+        items:
+          $ref: '#/definitions/PaymentCardIdAndCustomDescription'
+      airExtras:
+        type: array
+        items:
+          $ref: '#/definitions/PaymentCardIdAndCustomDescription'
+
+  Vouchers:
+    type: object
+    properties:
+      flight:
+        type: array
+        items:
+          $ref: '#/definitions/FlightVoucher'
+
+  Traveler:
+    type: object
+    properties:
+      id:
+              type: string
+              example: 'site-SiteNameuser-UserName'
+              description: Traveler ID which contains SiteName and UserName
+      siteId:
+        type: string
+        description: The unique identifier to request site details by a main site name and subsite name, in the form of `site-{mainSite}subsite-{subSite}`.
+        example: 'site-sabresubsite-northamerica'
+      personalDetails:
+          $ref: '#/definitions/PersonalInformation'
+      contactInfo:
+          $ref: '#/definitions/ContactInfo'
+      loyalties:
+          $ref: '#/definitions/Loyalties'
+      preferences:
+          $ref: '#/definitions/Preferences'
+      paymentCards:
+          $ref: '#/definitions/PaymentCards'
+      vouchers:
+          $ref: '#/definitions/Vouchers'
+      corporateSettings:
+          $ref: '#/definitions/CorporateSettings'
+
+
+  CorporateSettings:
+    type: object
+    properties:
+      justifications:
+        type: array
+        items:
+          $ref: '#/definitions/JustificationDescriptionTypeCode'
+      authorizerNames:
+        type: array
+        items:
+          type: string
+          example: 'VP of Travel'
+      supplementaryDataGroups:
+        type: array
+        items:
+          $ref: '#/definitions/SupplementaryDataQuestionGroup'
+
+  CartRequest:
+    type: object
+    properties:
+      removeAll:
+        type: boolean
+        description: Boolean to remove all items from the `Cart` if `true`.
+      add:
+        type: array
+        description: An array of objects to add to the `Cart`; each object contains a unique `resourceId` associated with the `itemType`. `itemType` can be `FLIGHT_ITINERARY`, `FLIGHT_JOURNEY`, `FLIGHT_SEAT`.
+        items:
+          $ref: '#/definitions/CartItem'
+      remove:
+        type: array
+        description: An array of objects to remove from the `Cart`; each object contains a unique `resourceId` associated with the `itemType`. `itemType` can be `FLIGHT_ITINERARY`, `FLIGHT JOURNEY`, `FLIGHT_SEAT`.
+        items:
+          $ref: '#/definitions/CartItem'
+
+  CartItem:
+    type: object
+    required:
+      - itemType
+      - resourceId
+    properties:
+      itemType:
+        $ref: '#/definitions/CartItemType'
+      resourceId:
+        type: string
+
+  CartBookableItems:
+    type: object
+    properties:
+      bookableFlightItineraries:
+        type: array
+        items:
+          $ref: '#/definitions/CartBookableFlightItem'
+      bookableFlightSeats:
+        $ref: '#/definitions/CartBookableFlightSeatItems'
+      bookableAirExtras:
+        $ref: '#/definitions/CartBookableAirExtraItems'
+
+
+  CartBookableFlightItem:
+    type: object
+    properties:
+      flightItinerary:
+        $ref: '#/definitions/Itinerary'
+      acceptableKnownPaymentOptions:
+        type: array
+        items:
+          $ref: '#/definitions/PaymentOptionIdAndCustomDescription'
+      acceptableNewPaymentCards:
+        type: array
+        items:
+          $ref: '#/definitions/AcceptablePaymentCard'
+      paymentCardSecurityCodeRequired:
+        type: boolean
+
+  CartBookableFlightSeatItems:
+    type: object
+    properties:
+      seats:
+        type: array
+        description: An array of objects that describe particular seats and provide additional information about the corresponding flight.
+        items:
+          $ref: '#/definitions/AircraftSeat'
+      acceptableKnownPaymentOptions:
+        type: array
+        description: An array of objects that contain profile and site credit card information that can be used for booking.
+        items:
+          $ref: '#/definitions/PaymentOptionIdAndCustomDescription'
+      acceptableNewPaymentCards:
+        type: array
+        description: An array of objects that contain information about the  types of credit cards that can be used as new payments.
+        items:
+          $ref: '#/definitions/AcceptablePaymentCard'
+      paymentCardSecurityCodeRequired:
+        description: A boolean that determines if a security code is required to book a seat.
+        type: boolean
+
+  CartBookableAirExtraItems:
+    type: object
+    properties:
+      airExtras:
+        type: array
+        items:
+          $ref: '#/definitions/AirExtra'
+
+  AcceptablePaymentCard:
+    type: object
+    properties:
+      cardTypeCode:
+        type: string
+      quotedUsageFee:
+        $ref: '#/definitions/Money'
+      localizedUsageFee:
+        $ref: '#/definitions/Money'
+
+  Cart:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/CartItem'
+      bookableItems:
+          $ref: '#/definitions/CartBookableItems'
+      supplementaryDataGroups:
+        type: array
+        items:
+          $ref: '#/definitions/SupplementaryDataQuestionGroup'
+      isGenderRequired:
+        type: boolean
+        example: true
+        description: is gender of all travelers required when making a booking
+      isDateOfBirthRequired:
+        type: boolean
+        example: false
+        description: is date of birth of all travelers required when making a booking
+      isTSARedressNumberUsable:
+        type: boolean
+        example: true
+        description: is a Redress number issued by the United States Transportation Security Administration usable when making a booking
+      isPassportNumberRequired:
+        type: boolean
+        example: true
+        description: is passport number requred when making a booking
+      isPassportExpirationDateRequired:
+        type: boolean
+        example: true
+        description: is expiration date of passport requred when making a booking
+      isPassportIssuingCountryCodeRequired:
+        type: boolean
+        example: true
+        description: is code of country issuing passport requred when making a booking
+
+  OneWay:
+    type: object
+    description: An object that contains details of the one-way flight. Cannot be used with `roundTrip`.
+    required:
+      - fromAirportCode
+      - toAirportCode
+      - date
+      - time
+    properties:
+      fromAirportCode:
+        type: string
+        description: The 3 letter code of the airport from which the traveler wants to depart.
+        example: 'DFW'
+        minLength: 3
+        maxLength: 3
+      toAirportCode:
+        type: string
+        description: The 3 letter code of the airport where the traveler wants to arrive.
+        example: 'LAX'
+        minLength: 3
+        maxLength: 3
+      date:
+        type: string
+        format: date
+        description: The date of the one-way flight in `YYYY-MM-DD` format.
+      time:
+        type: string
+        description: The time of the one-way flight in `hh:mm` format.
+        example: '13:00'
+        format: date-time
+
+  RoundTrip:
+    type: object
+    description: An object that contains details of the round-trip flight. Cannot be used with `oneWay`.
+    required:
+         - fromAirportCode
+         - toAirportCode
+         - departDate
+         - departTime
+         - returnDate
+         - returnTime
+    properties:
+      fromAirportCode:
+           type: string
+           example: 'DFW'
+           minLength: 3
+           maxLength: 3
+           description: The 3 letter code of the airport from which the traveler wants to depart.
+      toAirportCode:
+           type: string
+           description: The 3 letter code of the airport where the traveler wants to arrive.
+           example: 'LAX'
+           minLength: 3
+           maxLength: 3
+      departDate:
+        type: string
+        description: The date of the round-trip departure flight in `YYYY-MM-DD` format.
+        format: date
+      departTime:
+        type: string
+        description: The time of the round-trip departure flight in `hh:mm` format.
+        example: '14:00'
+        format: date-time
+      returnDate:
+        type: string
+        description: The date of the round-trip return flight in `YYYY-MM-DD` format.
+        format: date
+      returnTime:
+        type: string
+        description: The time of the round-trip return flight in `hh:mm` format.
+        example: '23:00'
+        format: date-time
+
+  JourneyContext:
+    type: object
+    required:
+        - fromAirportCode
+        - toAirportCode
+        - date
+        - time
+    properties:
+      fromAirportCode:
+        type: string
+        example: 'DFW'
+        minLength: 3
+        maxLength: 3
+      toAirportCode:
+        type: string
+        example: 'LAX'
+        minLength: 3
+        maxLength: 3
+      date:
+        type: string
+        format: date
+      time:
+        type: string
+        example: '12:00'
+        format: date-time
+
+  ShopByPrice:
+      type: object
+      description: An object that contains pricing details if shopping by price.
+      properties:
+        fareType:
+          $ref: '#/definitions/FareType'
+
+  Journey:
+      type: object
+      required:
+        - journeyId
+      properties:
+        journeyId:
+          type: string
+          description: the identifier of the journey
+        context:
+          $ref: '#/definitions/JourneyContext'
+        soldOut:
+          type: boolean
+          description: true if the Journey is sold out
+        flights:
+          type: array
+          items:
+            $ref: '#/definitions/AnnotatedFlight'
+        policyViolations:
+          type: array
+          items:
+            $ref: '#/definitions/Violation'
+
+  SupplementaryDataQuestion:
+    type: object
+    properties:
+      supplementaryDataQuestionId:
+        type: string
+        example: '12345'
+      question:
+        type: string
+        example: 'What is your favorite aircraft on which to travel?'
+      answerRequired:
+        type: boolean
+        example: 'true'
+      instructionalText:
+        type: string
+        example: 'Enter the type of aircraft that you really prefer to travel on, whether for a domestic trip or for an internatipnal trip.'
+      openResponse:
+          $ref: '#/definitions/OpenResponseDefinition'
+      constrainedResponse:
+          $ref: '#/definitions/ConstrainedResponseDefinition'
+
+  OpenResponseDefinition:
+      type: object
+      properties:
+        format:
+          $ref: '#/definitions/OpenResponseFormatType'
+        numberConstraint:
+          $ref: '#/definitions/NumberConstraintDefinition'
+        dateConstraint:
+          $ref: '#/definitions/DateConstraintDefinition'
+        textConstraint:
+          $ref: '#/definitions/TextConstraintDefinition'
+        defaultAnswer:
+          type: string
+          description: the answer that is the default
+          example: Monday
+
+  NumberConstraintDefinition:
+      type: object
+      properties:
+        minimum:
+          type: integer
+          format: int64
+          example: 12
+          description: the minimum value that is permitted
+        maximum:
+          type: integer
+          format: int64
+          example: 22
+          description: the maximum value that is permitted
+
+  DateConstraintDefinition:
+      type: object
+      properties:
+        earliest:
+          type: string
+          format: date
+          description: the earliest date that is permitted
+          example: "2017-12-01"
+        latest:
+          type: string
+          format: date
+          description: the latest date that is permitted
+          example: "2017-12-05"
+
+  TextConstraintDefinition:
+      type: object
+      properties:
+        expression:
+          type: string
+          description: a regular expression to define the constraint
+          example: "[^a-zA-Z]"
+
+  OpenResponseAnswer:
+    type: object
+    properties:
+      answer:
+        type: string
+
+  ConstrainedResponseAnswer:
+    type: object
+    properties:
+      answerIds:
+        type: array
+        items:
+          type: string
+
+
+  ConstrainedResponseDefinition:
+    type: object
+    properties:
+      numberOfAnswersAllowed:
+        type: integer
+        example: '1'
+      preDefinedAnswers:
+        type: array
+        items:
+          $ref: '#/definitions/ConstrainedAnswer'
+
+
+  ConstrainedAnswer:
+    type: object
+    properties:
+      answerId:
+        type: string
+        example: '1'
+      answer:
+        type: string
+        example: 'ORD'
+      isDefault:
+        type: boolean
+        example: 'false'
+
+  OpenResponseConfig:
+    type: object
+    properties:
+      allowAlpha:
+        type: boolean
+      allowNumeric:
+        type: boolean
+      allowSpecialCharacters:
+        type: boolean
+      allowText:
+        type: boolean
+      regularExpression:
+        type: string
+      minimumValue:
+        type: string
+      maximumValue:
+        type: string
+      inputMinimumLength:
+        type: integer
+      inputMaximumLength:
+        type: integer
+
+  SiteUpdateRequest:
+    type: object
+    properties:
+      airConfiguration:
+        $ref: '#/definitions/AirConfiguration'
+        description: Air configuration settings related to flight shopping.
+
+  SubSiteCreateInfo:
+    type: object
+    properties:
+      subSiteName:
+        type: string
+        example: newsubsitename
+        description: Name for the new subsite - must be unique within the main site.
+      mainSiteName:
+        type: string
+        example: mainsitename
+        description: Name of the main site where the new subsite will be created.
+      templateSiteName:
+        type: string
+        example: templatesitename
+        description: Name of the template used to create the new subsite.
+
+  AirConfiguration:
+    type: object
+    properties:
+      useNegotiatedAirfare:
+        type: boolean
+        example: true
+        description: Boolean to search for negotiated airfares during flight shopping.
+      companyCodeForNegotiatedAirfare:
+        type: string
+        example: abcd
+        description: Special code used to obtain negotiated airfares during flight shopping.  Often called a SNAP fare in Sabre, Private Fare in Apollo, or Secure Rate in Worldspan.
+      useNegotiatedFareForPriceEstimate:
+        type: boolean
+        example: true
+        description: Boolean to use negotiated fares as estimated prices for each flight leg in the shopping results by dividing round trip itineraries in half for the same carrier and same fare type.  Best practice is “no”.
+      alwaysDisplayNegotiatedAirfares:
+        type: string
+        enum: ["YES", "NO", "IGNORE"]
+        example: YES
+        description: Setting to always include negotiated airfares in shopping results even if less expensive alternatives are available.  Must be “YES”, “NO”, or "IGNORE".  If set to “YES”, only negotiated airfares are returned – without any lower priced options.
+      fareLedSearchSettings:
+        $ref: '#/definitions/FareLedSearchSettings'
+        description: A collection of settings related to the search window, connections, and search priorities for flight shopping using Search by Price.
+
+  FareLedSearchSettings:
+    type: object
+    properties:
+      timeSearchExtensionInHours:
+        type: integer
+        minimum: 0
+        maximum: 8
+        example: 8
+        description: The number of hours to extend the shopping search window around the requested depart time or arrival time – in both directions (until midnight).  Must be an integer value from 0 to 8.
+      numberOfConnectionsAllowed:
+        type: integer
+        minimum: 1
+        maximum: 3
+        example: 2
+        description: The number of connections to include in flight shopping.  Must be an integer value from 1 to 3.
+      enableUsersToSearchPlusMinusDates:
+        type: boolean
+        example: true
+        description: Boolean to enable or disable the +/- 1 to 3 day flight search option.  Requires enablement and configuration of Super PNR by a GetThere technician.  Only applies when shopping for Coach.
+      fareLedSearchPriority:
+        $ref: '#/definitions/FareLedSearchPriority'
+        description: A collection of four settings to specify the priorities used with Search by Price.  All four settings must be included and must be unique (no duplicates).
+
+  FareLedSearchPriority:
+    type: object
+    properties:
+      priorityOne:
+        $ref: '#/definitions/FareLedSearchPriorityType'
+        example: PRICE
+        description: The first priority used with Search by Price.  Must be "PRICE", "NON-STOP", “TIME”, or “AIRLINE”.
+      priorityTwo:
+        $ref: '#/definitions/FareLedSearchPriorityType'
+        example: NON_STOP
+        description: The second priority used with Search by Price.  Must be "PRICE", "NON-STOP", “TIME”, or “AIRLINE”.
+      priorityThree:
+        $ref: '#/definitions/FareLedSearchPriorityType'
+        example: TIME
+        description: The third priority used with Search by Price.  Must be "PRICE", "NON-STOP", “TIME”, or “AIRLINE”.
+      priorityFour:
+        $ref: '#/definitions/FareLedSearchPriorityType'
+        example: AIRLINE
+        description: The lowest priority used with Search by Price.  Must be "PRICE", "NON-STOP", “TIME”, or “AIRLINE”.
+
+  FareLedSearchPriorityType:
+    type: string
+    enum: ["PRICE", "NON-STOP", "TIME", "AIRLINE"]
+
+  SupplementaryDataAnswer:
+    type: object
+    properties:
+      questionId:
+        type: string
+      openResponse:
+          $ref: '#/definitions/OpenResponseAnswer'
+      constrainedResponse:
+          $ref: '#/definitions/ConstrainedResponseAnswer'
+
+  FareRules:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 'c23e107e-2b3a-4793-a442-217fdec4dcb2'
+      rules:
+        type: array
+        items:
+          type: string
+          example: 'V FARE BASIS     BK    FARE   TRAVEL-TICKET AP  MINMAX  RTG'
+
+  DeploymentInfo:
+    type: object
+    properties:
+      environment:
+        type: string
+        example: 'cert'
+      version:
+        type: string
+        example: '1.4.0-SNAPSHOT'
+      buildDate:
+        type: string
+        example: '2017-09-25T08:58:46Z'
+      endpoints:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceEndpoint'
+
+  ServiceEndpoint:
+    type: object
+    properties:
+      method:
+        type: string
+        enum: ["GET","POST","PUT","PATCH","DELETE"]
+      path:
+        type: string
+        example: '/v1/tex/api/catalogs/{id}'
+
+  AircraftSeatMapRowItemType:
+    type: string
+    enum: ["SEAT", "AISLE"]
+    description: the types of item in an Aircraft Row.  Use one of - SEAT, AISLE
+
+  AircraftSeatMapRowItemOccupancyState:
+    type: string
+    enum: ["AVAILABLE", "ASSIGNED", "UNAVAILABLE"]
+    description: state of a seat, AVAILABLE - seat can be booked, ASSIGNED - seat has been already booked, UNAVAILABLE - seat is either unavailable for booking or airline API describes this space as unavailable.
+
+  AircraftSeatMapDeckLevel:
+    type: string
+    enum: ["UPPER", "LOWER"]
+
+  AircraftSeatMap:
+    type: object
+    properties:
+      fromAirportCode:
+        type: string
+        example: 'DFW'
+        minLength: 3
+        maxLength: 3
+        description: The three-letter IATA code of the departure airport.
+      toAirportCode:
+        type: string
+        example: 'LAX'
+        minLength: 3
+        maxLength: 3
+        description: The three-letter IATA code of the arrival airport.
+      departureDate:
+        type: string
+        format: date
+        example: '2018-04-07'
+        description: The departure date in `YYYY-MM-DD` ISO format.
+      departureTime:
+        type: string
+        format: date-time
+        example: '03:00'
+        description: The departure time in `hh:mm` (24 hour) ISO format.
+      arrivalDate:
+        type: string
+        format: date
+        description: The arrival date in `YYYY-MM-DD` ISO format.
+      arrivalTime:
+        type: string
+        format: date-time
+        example: '22:30'
+        description: The arrival time in `hh:mm` (24 hour) ISO format.
+      marketingAirlineCode:
+        type: string
+        maxLength: 2
+        minLength: 2
+        example: AA
+        description: The two-letter IATA code of the marketing airline.
+      marketingAirlineName:
+        type: string
+        example: American Airlines
+        description: The full name of the marketing airline.
+      flightNumber:
+        type: string
+        maxLength: 4
+        minLength: 1
+        example: 1276
+        description: The numeric identifier for the flight.
+      equipment:
+        $ref: '#/definitions/Equipment'
+      premiumSeatFeesReimbursable:
+        type: boolean
+        example: true
+        description: A boolean that indicates if premium seats are reimbursable.
+      decks:
+        type: array
+        items:
+          $ref: '#/definitions/AircraftSeatMapDeck'
+
+  AircraftSeatMapDeck:
+    type: object
+    properties:
+      level:
+        $ref: '#/definitions/AircraftSeatMapDeckLevel'
+      cabins:
+        type: array
+        items:
+          $ref: '#/definitions/AircraftSeatMapCabin'
+
+  AircraftSeatMapCabin:
+    type: object
+    properties:
+      classOfService:
+        $ref: '#/definitions/ClassOfService'
+      rows:
+        type: array
+        items:
+          $ref: '#/definitions/AircraftSeatMapRow'
+
+  AircraftSeatMapRowItem:
+    type: object
+    properties:
+      positionInRow:
+        type: integer
+        example: 1
+      type:
+        $ref: '#/definitions/AircraftSeatMapRowItemType'
+      seat:
+        $ref: '#/definitions/AircraftSeatMapSeat'
+
+  AircraftSeatMapRow:
+    type: object
+    properties:
+      number:
+        type: integer
+        example: 12
+      wingRow:
+        type: boolean
+        example: false
+      rowItems:
+        type: array
+        items:
+          $ref: '#/definitions/AircraftSeatMapRowItem'
+
+  AircraftSeatMapSeat:
+    type: object
+    properties:
+      seatId:
+        type: string
+        example: 'FROM_LOWFARE:68c67a34-7c86-4a46-8eec-80e14d5e551a.1991351807:AA:1513&8A'
+        description: The unique identifier for the seat, can be retrieved from seatMap.
+      label:
+        type: string
+        example: '23A'
+        description: The seat number provided by the carrier.
+      premium:
+        type: boolean
+        example: true
+        description: A boolean that determines if the seat is premium, which may impose additional restrictions.
+      feeApplies:
+        type: boolean
+        description: A boolean that determines if the seat requires payment.
+      inExitRow:
+        type: boolean
+        description: A boolean that determines if the seat is located in an exit row.
+      selectable:
+        type: boolean
+        description: A boolean that determines if the seat can be booked through API.
+      quotedFee:
+        description: The seat fee in the carrier's specific currency.
+        $ref: '#/definitions/Money'
+      localizedFee:
+        description: The seat fee in the traveler's preferred currency.
+        $ref: '#/definitions/Money'
+      occupancyState:
+        $ref: '#/definitions/AircraftSeatMapRowItemOccupancyState'
+
+  AircraftSeat:
+    type: object
+    properties:
+      seatId:
+        type: string
+        example: 'FROM_LOWFARE:68c67a34-7c86-4a46-8eec-80e14d5e551a.1991351807:AA:1513&8A'
+        description: The unique identifier for the seat, can be retrieved from seatMap.
+      fromAirportCode:
+        type: string
+        example: 'DFW'
+        minLength: 3
+        maxLength: 3
+        description: The three-letter IATA code of the departure airport.
+      toAirportCode:
+        type: string
+        example: 'LAX'
+        minLength: 3
+        maxLength: 3
+        description: The three-letter IATA code of the arrival airport.
+      departureDate:
+        type: string
+        format: date
+        example: '2018-04-07'
+        description: The departure date in `YYYY-MM-DD` ISO format.
+      departureTime:
+        type: string
+        format: date-time
+        example: '03:00'
+        descritpion: The departure time in `hh:mm` (24 hour) ISO format.
+      arrivalDate:
+        type: string
+        format: date
+        example: '2018-04-12'
+        description: The arrival date in `YYYY-MM-DD` ISO format.
+      arrivalTime:
+        type: string
+        format: date-time
+        example: '22:30'
+        descritpion: The arrival time in `hh:mm` (24 hour) ISO format.
+      marketingAirlineCode:
+        type: string
+        maxLength: 2
+        minLength: 2
+        example: AA
+        description: The two-letter IATA code of the marketing airline.
+      marketingAirlineName:
+        type: string
+        example: American Airlines
+        description: The full name of the marketing airline.
+      flightNumber:
+        type: string
+        maxLength: 4
+        minLength: 1
+        example: 1276
+        description: The numeric identifier for the flight.
+      equipment:
+        $ref: '#/definitions/Equipment'
+      label:
+        type: string
+        example: '23A'
+        description: The seat number provided by the carrier.
+      premium:
+        type: boolean
+        example: true
+        description: A boolean that determines if the seat is premium, which may impose additional restrictions.
+      feeApplies:
+        type: boolean
+        description: A boolean that determines if the seat requires payment.
+      quotedFee:
+        description: The seat fee in the carrier's specific currency.
+        $ref: '#/definitions/Money'
+      localizedFee:
+        description: The seat fee in the traveler's preferred currency.
+        $ref: '#/definitions/Money'
+
+  SiteCreateRequest:
+    type: object
+    properties:
+      companyName:
+        type: string
+        example: Sabre
+        description: Company name for the new subsite.
+      administratorUserName:
+        type: string
+        example: subSiteAdministrator
+        description: User name for the new subsite’s Administrator.
+      administratorEmail:
+        type: string
+        example: subSiteAdministrator@sabre.com
+        description: E-mail address of the new subsite’s Administrator.
+      subSite:
+        $ref: '#/definitions/SubSiteCreateInfo'
+
+  SiteDetails:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 'site-{mainSite}subsite-{subSite}'
+        description: Identification of subsite to be updated, plus the main site for that subsite.
+      airConfiguration:
+        $ref: '#/definitions/AirConfiguration'
+        description: Air configuration settings related to flight shopping.
+
+  SiteAnnouncements:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Object containing name of the subsite to be updated, plus the main site name for that subsite.
+        example: 'site-sabresubsite-northamerica'
+      announcements:
+        type: array
+        description: An array containing details of the site announcements.
+        items:
+          $ref: '#/definitions/SiteAnnouncement'
+
+  SiteAnnouncement:
+    type: object
+    description: Object containing the details of the announcement.
+    properties:
+      label:
+        type: string
+        description: Label indicating the type of announcement message.
+        example: 'FLIGHT_ITINERARY_HEADER'
+      languageCode:
+        type: string
+        description: The language in which the message is displayed.
+        example: 'en-US'
+      message:
+        $ref: '#/definitions/SiteMessage'
+        description: The message entered by the Travel Manager. Can only have either `message` or `carouselMessages`, but not both.
+      carouselMessages:
+        type: array
+        description: An array that creates a message carousel. Can only have either `message` or `carouselMessages`, but not both.
+        items:
+          $ref: '#/definitions/CarouselMessage'
+
+  SiteMessage:
+    type: object
+    properties:
+      text:
+        type: string
+        description: The message entered by the Travel Manager.
+        example: 'Hello world!'
+      postDate:
+        type: string
+        description: The date the message was posted.
+        example: '2017-12-04'
+
+  CarouselMessage:
+    type: object
+    description: An object containing the details of messages in the carousel.
+    example: 'American Airlines new preferred seats'
+    properties:
+      title:
+        type: string
+        description: The title of the message block.
+        example: 'American Airlines new preferred seats'
+      postDate:
+        type: string
+        description: The date the message was posted.
+        example: '2017-12-04'
+      summary:
+        type: string
+        description: The summary message.
+        example: 'American Airlines will now allow you to select preferred seats normally blocked and reserved for those with elevated status.'
+      details:
+        type: string
+        description: The detailed message.
+        example: 'American Airlines will now allow you to select preferred seats normally blocked and reserved for those with elevated status. The preferred seats are subject to availability and can only be confirmed if your airline ticket was issued by your agency and your trip is for corporate business travel. To select a seat wait until the agency has issued your ticket, then log onto seatselect.aa.com and enter your confirmation number and name. Select your seat from those showing as available.'
+
+  AirExtra:
+    type: object
+    properties:
+      airExtraId:
+        type: string
+        example: 'AE&78c27a43-2999-44b0-bc7e-ffda8756fd70.41319203&LUGGAGE&FLIGHT_JOURNEY&Outward&1'
+      type:
+        $ref: '#/definitions/AirExtraType'
+      scope:
+        $ref: '#/definitions/AirExtraScope'
+      flightId:
+        type: string
+        description: the identifier of the flight with which this AirExtra is associated;  used when Scope is FLIGHT
+      journeyId:
+        type: string
+        description: the identifier of the journey with which this AirExtra is associated;  used when Scope is FLIGHT_JOURNEY
+      itineraryId:
+        type: string
+        description: the identifier of the itinerary with which this AirExtra is associated;  used when Scope is FLIGHT_ITINERARY
+      description:
+        type: string
+        example: 2 bags, upto 20 kg each, 20.00 USD
+        description: information on the AirExtra, including a fee description, if applicable
+
+
+  BookedAirExtra:
+    type: object
+    properties:
+      type:
+        $ref: '#/definitions/AirExtraType'
+      scope:
+        $ref: '#/definitions/AirExtraScope'
+      description:
+        type: string
+        example: 2 bags, upto 20 kg each, 20.00 USD
+        description: information on the AirExtra, including a fee description, if applicable
+      quotedFee:
+        $ref: '#/definitions/Money'
+      localizedFee:
+        $ref: '#/definitions/Money'
+
+  ModifyBookingRequest:
+    type: object
+    properties:
+      removeAll:
+        type: boolean
+        description: Boolean to cancel all items from the `Booking` if `true`.
+
+  BookingRules:
+    type: object
+    required:
+      - id
+      - bookingId
+      - isCancellable
+    properties:
+      id:
+        type: string
+        description: The unique identifier of the itinerary from `GET bookings`.
+      bookingId:
+        type: string
+        description: The unique identifier of the booking created in `POST bookings`.
+      isCancellable:
+        type: boolean
+        description: If true, this booking can be cancelled by the traveler.
+      flightItinerary:
+        $ref: '#/definitions/FlightItinerary'
+      railItinerary:
+        $ref: '#/definitions/RailItinerary'
+
+  FlightItinerary:
+    type: object
+    properties:
+      isVoidable:
+        type: boolean
+        description: If true, this booking be voided by the traveler.
+      isRefundable:
+        type: string
+        enum: ["TRUE", "FALSE", "UNKNOWN"]
+        description: Determines if the itinerary is refundable. Can be `TRUE`, `FALSE`, or `UNKNOWN`.
+      refund:
+        description: Portion of the booking money to be returned.
+        $ref: '#/definitions/Money'
+      voucher:
+        description: Form authorizing a disbursement of credit against a purchase or expense to be made in the future.
+        $ref: '#/definitions/Money'
+      cancellationPenalty:
+        description: Portion of the booking money that is forfeited.
+        $ref: '#/definitions/Money'
+
+  RailItinerary:
+    type: object
+    properties:
+      cancellationPenalty:
+        description: Portion of the booking money that is forfeited.
+        $ref: '#/definitions/Money'
